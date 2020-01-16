@@ -1,0 +1,56 @@
+#TODO: Change the Branding Accordingly
+#TODO: Support for more/all parameters to be added
+name: 'Deploy to Azure Container Instances'
+description: 'Deploy to Containers to Azure Container Instances. github.com/Azure/Actions'
+inputs:
+    resource-group:
+        description: 'Name of the Resource Group in which the Container Instance will be created'
+        required: true
+    cpu:
+        description: 'Number of CPU Cores Required'
+        required: false
+        default: 1
+    dns-name-label:
+        description: 'The DNS Name Label for Container with Public IP'
+        required: true
+    image:
+        description: 'Specify the fully qualified container image name. For example, "myregistry.azurecr.io/nginx:latest" or "python:3.7.2-alpine/"'
+        required: true
+    ip-address:
+        description: 'IP Address type of the Container Group. Accepted Values are { Private, Public }'
+        required: false
+    location:
+        description: 'Location where the Container will be deployed'
+        required: false
+    memory:
+        description: 'Required Memory of the Containers in GB, accurate to one decimal place'
+        required: false
+        default: 1.5
+    name:
+        description: 'Name of the Container Group Instance'
+        required: true
+    os-type:
+        description: 'The OS type of the Containers. Accepted Values are  { Linux, Windows }'
+        required: false
+        default: 'Linux'
+    ports:
+        description: 'The Ports to Open on the Container. Space seperate the ports for multiple values'
+        required: false
+        default: '80'
+    registry-login-server:
+        description: 'The container image registry login server'
+        required: false
+    registry-username:
+        description: 'Username to log in Container Image Registry Server'
+        required: false
+    registry-password:
+        description: 'Password to log in Container Image Registry Server'
+outputs:
+    app-url:
+        description: 'URL of the Deployed Application'
+branding:
+    icon: 'container-webapp.svg'
+    color: 'blue'
+runs:
+    using: 'node12'
+    main: 'lib/main.js'
