@@ -40,11 +40,15 @@ inputs:
     registry-login-server:
         description: 'The container image registry login server'
         required: false
+        default: ''
     registry-username:
         description: 'Username to log in Container Image Registry Server'
         required: false
+        default: ''
     registry-password:
         description: 'Password to log in Container Image Registry Server'
+        required: false
+        default: ''
 outputs:
     app-url:
         description: 'URL of the Deployed Application'
