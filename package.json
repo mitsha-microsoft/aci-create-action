@@ -22,5 +22,9 @@
     "@azure/arm-containerinstance": "^5.4.0",
     "@types/q": "^1.5.2",
     "azure-actions-webclient": "^1.0.8"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.7",
+    "typescript": "^3.7.5"
   }
 }
