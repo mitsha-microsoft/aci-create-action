@@ -58,8 +58,14 @@ async function main() {
             "type": "Microsoft.ContainerInstance/containerGroups",
             "name": taskParams.containerName
         }
-        client.containerGroups.createOrUpdate(taskParams.resourceGroup, taskParams.containerName, containerGroupInstance);
-
+        let containerDeploymentResult = await client.containerGroups.createOrUpdate(taskParams.resourceGroup, taskParams.containerName, containerGroupInstance);
+        if(containerDeploymentResult.provisioningState == "Succeeded") {
+            let appUrlWithoutPort = containerDeploymentResult.ipAddress?.fqdn;
+            let port = taskParams.ports[0].port;
+            let appUrl = "http://"+appUrlWithoutPort+":"+port.toString()+"/"
+            core.setOutput("app-url", appUrl);
+            core.warning("Your App has been deployed at: "+appUrl);
+        }
     }
     catch (error) {
         core.debug("Deployment Failed with Error: " + error);
@@ -67,6 +73,6 @@ async function main() {
         core.setFailed(error);
     }
     finally{
-        core.debug('TODO');
+
     }
 }
