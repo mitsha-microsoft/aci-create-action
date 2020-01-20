@@ -30,6 +30,36 @@ async function main() {
         core.debug("Predeployment Steps Started");
         const client = new ContainerInstanceManagementClient(creds, taskParams.subscriptionId);
 
+        core.debug("Deployment Step Started");
+        // TODO: Include all parameters in the ARM Template
+        let containerGroupInstance: ContainerInstanceManagementModels.ContainerGroup = {
+            "containers": [
+                {
+                    "name": taskParams.containerName,
+                    "command": [],
+                    "environmentVariables": [],
+                    "image": taskParams.image,
+                    "ports": taskParams.ports,
+                    "resources": {
+                        "requests": {
+                            "cpu": taskParams.cpu,
+                            "memoryInGB": taskParams.memory
+                        }
+                    }
+                }
+            ],
+            "imageRegistryCredentials": taskParams.registryUsername ? [ { "server": taskParams.registryLoginServer, "username": taskParams.registryUsername, "password": taskParams.registryPassword } ] : [],
+            "ipAddress": {
+                "ports": taskParams.ports,
+                "type": "Public",
+                "dnsNameLabel": taskParams.dnsNameLabel
+            },
+            "osType": "Linux",
+            "type": "Microsoft.ContainerInstance/containerGroups",
+            "name": taskParams.containerName
+        }
+        client.containerGroups.createOrUpdate(taskParams.resourceGroup, taskParams.containerName, containerGroupInstance);
+
     }
     catch (error) {
         core.debug("Deployment Failed with Error: " + error);

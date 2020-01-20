@@ -3,7 +3,7 @@ import * as core from '@actions/core';
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 
 import fs = require('fs');
-import { Port } from '@azure/arm-containerinstance/esm/models';
+import { ContainerInstanceManagementModels } from '@azure/arm-containerinstance';
 
 export class TaskParameters {
     private static taskparams: TaskParameters;
@@ -14,7 +14,7 @@ export class TaskParameters {
     private _image:string;
     private _memory: number;
     private _containerName: string;
-    private _ports: Array<Port>;
+    private _ports: Array<ContainerInstanceManagementModels.Port>;
     private _registryLoginServer: string;
     private _registryUsername: string;
     private _registryPassword: string;
@@ -30,7 +30,7 @@ export class TaskParameters {
         this._memory = parseFloat(core.getInput('memory'));
         this._containerName = core.getInput('name', { required: true });
         let ports = core.getInput('ports');
-        let portObjArr: Array<Port> = [];
+        let portObjArr: Array<ContainerInstanceManagementModels.Port> = [];
         ports.split(' ').forEach((portStr) => {
             let portInt = parseInt(portStr);
             portObjArr.push({ "port": portInt });
