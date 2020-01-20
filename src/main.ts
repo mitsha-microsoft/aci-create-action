@@ -5,6 +5,7 @@ import { AuthorizerFactory } from "azure-actions-webclient/AuthorizerFactory";
 import { IAuthorizer } from "azure-actions-webclient/Authorizer/IAuthorizer";
 import { async } from 'q';
 import { ContainerInstanceManagementClient, ContainerInstanceManagementModels, ContainerInstanceManagementMappers } from "@azure/arm-containerinstance";
+import { TokenCredentials, ServiceClientCredentials } from "@azure/ms-rest-js";
 
 import { TaskParameters } from "./taskparameters";
 
@@ -24,14 +25,10 @@ async function main() {
         let endpoint: IAuthorizer = await AuthorizerFactory.getAuthorizer();
         var taskParams = TaskParameters.getTaskParams(endpoint);
         let bearerToken = await endpoint.getToken();
-        // TODO: Get Credentials, Store them as TokenCredentials and use it to create the ContainerInstanceManagementClient
-        // let credentials = {
-        //     token: bearerToken,
-        //     authorizationScheme: "Bearer"
-        // };
+        let creds: ServiceClientCredentials = new TokenCredentials(bearerToken);
 
-        // core.debug("Predeployment Steps Started");
-        // const client = new ContainerInstanceManagementClient(credentials, taskParams.subscriptionId);
+        core.debug("Predeployment Steps Started");
+        const client = new ContainerInstanceManagementClient(creds, taskParams.subscriptionId);
 
     }
     catch (error) {
