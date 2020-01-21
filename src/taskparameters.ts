@@ -12,8 +12,11 @@ export class TaskParameters {
     private _cpu: number;
     private _dnsNameLabel: string;
     private _image:string;
+    private _ipAddress:ContainerInstanceManagementModels.ContainerGroupIpAddressType;
+    private _location:string;
     private _memory: number;
     private _containerName: string;
+    private _osType: ContainerInstanceManagementModels.OperatingSystemTypes;
     private _ports: Array<ContainerInstanceManagementModels.Port>;
     private _registryLoginServer: string;
     private _registryUsername: string;
@@ -27,8 +30,21 @@ export class TaskParameters {
         this._cpu = parseFloat(core.getInput('cpu'));
         this._dnsNameLabel = core.getInput('dns-name-label', { required: true });
         this._image = core.getInput('image', { required: true });
+        let ipAddress = core.getInput('ip-address');
+        if(ipAddress != "Public" || "Private") {
+            throw Error('The Value of IP Address must be either Public or Private');
+        } else {
+            this._ipAddress = (ipAddress == 'Public') ? 'Public' : 'Private';
+        }
+        this._location = core.getInput('location', { required: true });
         this._memory = parseFloat(core.getInput('memory'));
         this._containerName = core.getInput('name', { required: true });
+        let osType = core.getInput('os-type');
+        if(osType != 'Linux' || 'Windows') {
+            throw Error('The Value of OS Type must be either Linux or Windows only!')
+        } else {
+            this._osType = (osType == 'Linux') ? 'Linux' : 'Windows';
+        }
         let ports = core.getInput('ports');
         let portObjArr: Array<ContainerInstanceManagementModels.Port> = [];
         ports.split(' ').forEach((portStr) => {
@@ -37,6 +53,13 @@ export class TaskParameters {
         });
         this._ports = portObjArr;
         this._registryLoginServer = core.getInput('registry-login-server');
+        if(!this._registryLoginServer) {
+            // If the user doesn't give registry login server and the registry is ACR
+            let imageList = this._registryLoginServer.split('/');
+            if(imageList[0].indexOf('azurecr') > -1) {
+                this._registryLoginServer = imageList[0];
+            }
+        }
         this._registryUsername = core.getInput('registry-username');
         this._registryPassword = core.getInput('registry-password');
 
@@ -66,12 +89,24 @@ export class TaskParameters {
         return this._image;
     }
 
+    public get ipAddress() {
+        return this._ipAddress;
+    }
+
+    public get location() {
+        return this._location;
+    }
+
     public get memory() {
         return this._memory;
     }
 
     public get containerName() {
         return this._containerName;
+    }
+
+    public get osType() {
+        return this._osType;
     }
 
     public get ports() {

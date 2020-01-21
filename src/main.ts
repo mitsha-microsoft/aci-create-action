@@ -33,6 +33,7 @@ async function main() {
         core.debug("Deployment Step Started");
         // TODO: Include all parameters in the ARM Template
         let containerGroupInstance: ContainerInstanceManagementModels.ContainerGroup = {
+            "location": taskParams.location,
             "containers": [
                 {
                     "name": taskParams.containerName,
@@ -51,15 +52,16 @@ async function main() {
             "imageRegistryCredentials": taskParams.registryUsername ? [ { "server": taskParams.registryLoginServer, "username": taskParams.registryUsername, "password": taskParams.registryPassword } ] : [],
             "ipAddress": {
                 "ports": taskParams.ports,
-                "type": "Public",
+                "type": taskParams.ipAddress,
                 "dnsNameLabel": taskParams.dnsNameLabel
             },
-            "osType": "Linux",
+            "osType": taskParams.osType,
             "type": "Microsoft.ContainerInstance/containerGroups",
             "name": taskParams.containerName
         }
         let containerDeploymentResult = await client.containerGroups.createOrUpdate(taskParams.resourceGroup, taskParams.containerName, containerGroupInstance);
         if(containerDeploymentResult.provisioningState == "Succeeded") {
+            core.warning("Deployment Succeeded.");
             let appUrlWithoutPort = containerDeploymentResult.ipAddress?.fqdn;
             let port = taskParams.ports[0].port;
             let appUrl = "http://"+appUrlWithoutPort+":"+port.toString()+"/"
@@ -73,6 +75,11 @@ async function main() {
         core.setFailed(error);
     }
     finally{
+        core.debug(isDeploymentSuccess ? "Deployment Succeeded!" : "Deployment Failed!");
 
+        // Reset AZURE_HTTP_USER_AGENT
+        core.exportVariable('AZURE_HTTP_USER_AGENT', prefix);
     }
 }
+
+main();

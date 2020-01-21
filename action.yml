@@ -21,7 +21,7 @@ inputs:
         required: false
     location:
         description: 'Location where the Container will be deployed'
-        required: false
+        required: true
     memory:
         description: 'Required Memory of the Containers in GB, accurate to one decimal place'
         required: false
