@@ -61,7 +61,7 @@ inputs:
     restart-policy:
         description: 'Restart Policy for the container(s). Accepted Values are { Always, OnFailure, Never }'
         required: false
-        default: 
+        default: 'Always'
 outputs:
     app-url:
         description: 'URL of the Deployed Application'
