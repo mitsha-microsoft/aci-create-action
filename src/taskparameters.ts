@@ -46,7 +46,7 @@ export class TaskParameters {
         }
         this._image = core.getInput('image', { required: true });
         let ipAddress = core.getInput('ip-address');
-        if(ipAddress != "Public" || "Private") {
+        if(ipAddress != "Public" && "Private") {
             throw Error('The Value of IP Address must be either Public or Private');
         } else {
             this._ipAddress = (ipAddress == 'Public') ? 'Public' : 'Private';
@@ -55,7 +55,7 @@ export class TaskParameters {
         this._memory = parseFloat(core.getInput('memory'));
         this._containerName = core.getInput('name', { required: true });
         let osType = core.getInput('os-type');
-        if(osType != 'Linux' || 'Windows') {
+        if(osType != 'Linux' && 'Windows') {
             throw Error('The Value of OS Type must be either Linux or Windows only!')
         } else {
             this._osType = (osType == 'Linux') ? 'Linux' : 'Windows';
