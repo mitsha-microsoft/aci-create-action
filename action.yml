@@ -50,6 +50,10 @@ inputs:
         description: 'Password to log in Container Image Registry Server'
         required: false
         default: ''
+    restart-policy:
+        description: 'Restart Policy for the container(s). Accepted Values are { Always, OnFailure, Never }'
+        required: false
+        default: 
 outputs:
     app-url:
         description: 'URL of the Deployed Application'

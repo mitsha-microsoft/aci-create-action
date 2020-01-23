@@ -21,6 +21,7 @@ export class TaskParameters {
     private _registryLoginServer: string;
     private _registryUsername: string;
     private _registryPassword: string;
+    private _restartPolicy: ContainerInstanceManagementModels.ContainerGroupRestartPolicy;
     
     private _subscriptionId: string;
 
@@ -62,6 +63,12 @@ export class TaskParameters {
         }
         this._registryUsername = core.getInput('registry-username');
         this._registryPassword = core.getInput('registry-password');
+        let restartPolicy = core.getInput('restart-policy');
+        if(restartPolicy != "Always" || "OnFailure" || "Never") {
+            throw Error('The Value of Restart Policy can be "Always", "OnFailure" or "Never" only!');
+        } else {
+            this._restartPolicy = ( restartPolicy == 'Always' ) ? 'Always' : ( restartPolicy == 'Never' ? 'Never' : 'OnFailure');
+        }
 
         this._subscriptionId = endpoint.subscriptionID;
     }
@@ -123,6 +130,10 @@ export class TaskParameters {
 
     public get registryPassword() {
         return  this._registryPassword;
+    }
+
+    public get restartPolicy() {
+        return this._restartPolicy;
     }
 
     public get subscriptionId() {

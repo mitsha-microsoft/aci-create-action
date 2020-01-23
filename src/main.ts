@@ -56,6 +56,7 @@ async function main() {
                 "dnsNameLabel": taskParams.dnsNameLabel
             },
             "osType": taskParams.osType,
+            "restartPolicy": taskParams.restartPolicy,
             "type": "Microsoft.ContainerInstance/containerGroups",
             "name": taskParams.containerName
         }
