@@ -27,6 +27,7 @@ inputs:
     ip-address:
         description: 'IP Address type of the Container Group. Accepted Values are { Private, Public }'
         required: false
+        default: 'Public'
     location:
         description: 'Location where the Container will be deployed'
         required: true
