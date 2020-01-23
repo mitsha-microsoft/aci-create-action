@@ -20,7 +20,7 @@ inputs:
         default: ''
     gpu-sku:
         description: 'The SKU for the GPUs specified. Accepted Values are { K80, P100, V100 }'
-        default: 'K80'
+        default: ''
     image:
         description: 'Specify the fully qualified container image name. For example, "myregistry.azurecr.io/nginx:latest" or "python:3.7.2-alpine/"'
         required: true

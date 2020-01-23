@@ -39,6 +39,7 @@ export class TaskParameters {
         } else {
             if(gpuCount && !gpuSku) {
                 core.warning('Since GPU SKU is not mentioned, creating GPU Resources with the SKU K80.');
+                gpuSku = 'K80';
             }
             this._gpuCount = parseInt(gpuCount);
             this._gpuSKU = (gpuSku == 'K80') ? 'K80' : ( gpuSku == 'P100' ? 'P100' : 'V100');
