@@ -41,12 +41,7 @@ async function main() {
                     "environmentVariables": [],
                     "image": taskParams.image,
                     "ports": taskParams.ports,
-                    "resources": {
-                        "requests": {
-                            "cpu": taskParams.cpu,
-                            "memoryInGB": taskParams.memory
-                        }
-                    }
+                    "resources": getResources(taskParams)
                 }
             ],
             "imageRegistryCredentials": taskParams.registryUsername ? [ { "server": taskParams.registryLoginServer, "username": taskParams.registryUsername, "password": taskParams.registryPassword } ] : [],
@@ -80,6 +75,30 @@ async function main() {
 
         // Reset AZURE_HTTP_USER_AGENT
         core.exportVariable('AZURE_HTTP_USER_AGENT', prefix);
+    }
+}
+
+function getResources(taskParams: TaskParameters): ContainerInstanceManagementModels.ResourceRequirements {
+    if (taskParams.gpuCount) {
+        let resRequirements: ContainerInstanceManagementModels.ResourceRequirements = {
+            "requests": {
+                "cpu": taskParams.cpu,
+                "memoryInGB": taskParams.memory,
+                "gpu": {
+                    "count": taskParams.gpuCount,
+                    "sku": taskParams.gpuSku
+                }
+            }
+        }
+        return resRequirements;
+    } else {
+        let resRequirements: ContainerInstanceManagementModels.ResourceRequirements = {
+            "requests": {
+                "cpu": taskParams.cpu,
+                "memoryInGB": taskParams.memory
+            }
+        }
+        return resRequirements;
     }
 }
 

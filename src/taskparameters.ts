@@ -11,6 +11,8 @@ export class TaskParameters {
     private _resourceGroup: string;
     private _cpu: number;
     private _dnsNameLabel: string;
+    private _gpuCount: number;
+    private _gpuSKU: ContainerInstanceManagementModels.GpuSku;
     private _image:string;
     private _ipAddress:ContainerInstanceManagementModels.ContainerGroupIpAddressType;
     private _location:string;
@@ -30,6 +32,17 @@ export class TaskParameters {
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._cpu = parseFloat(core.getInput('cpu'));
         this._dnsNameLabel = core.getInput('dns-name-label', { required: true });
+        let gpuCount = core.getInput('gpu-count');
+        let gpuSku = core.getInput('gpu-sku');
+        if(gpuSku && !gpuCount) {
+            throw Error("You need to specify the count of GPU Resources with the SKU!"); 
+        } else {
+            if(gpuCount && !gpuSku) {
+                core.warning('Since GPU SKU is not mentioned, creating GPU Resources with the SKU K80.');
+            }
+            this._gpuCount = parseInt(gpuCount);
+            this._gpuSKU = (gpuSku == 'K80') ? 'K80' : ( gpuSku == 'P100' ? 'P100' : 'V100');
+        }
         this._image = core.getInput('image', { required: true });
         let ipAddress = core.getInput('ip-address');
         if(ipAddress != "Public" || "Private") {
@@ -90,6 +103,14 @@ export class TaskParameters {
 
     public get dnsNameLabel() {
         return this._dnsNameLabel;
+    }
+
+    public get gpuCount() {
+        return this._gpuCount;
+    }
+
+    public get gpuSku() {
+        return this._gpuSKU;
     }
 
     public get image() {
