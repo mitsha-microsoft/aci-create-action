@@ -38,10 +38,10 @@ async function main() {
                 {
                     "name": taskParams.containerName,
                     "command": [],
-                    "environmentVariables": [],
+                    "environmentVariables": taskParams.environmentVariables,
                     "image": taskParams.image,
                     "ports": taskParams.ports,
-                    "resources": getResources(taskParams)
+                    "resources": getResources(taskParams),
                 }
             ],
             "imageRegistryCredentials": taskParams.registryUsername ? [ { "server": taskParams.registryLoginServer, "username": taskParams.registryUsername, "password": taskParams.registryPassword } ] : [],

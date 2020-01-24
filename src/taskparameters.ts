@@ -11,6 +11,7 @@ export class TaskParameters {
     private _resourceGroup: string;
     private _cpu: number;
     private _dnsNameLabel: string;
+    private _environmentVariables: Array<ContainerInstanceManagementModels.EnvironmentVariable>;
     private _gpuCount: number;
     private _gpuSKU: ContainerInstanceManagementModels.GpuSku;
     private _image:string;
@@ -32,6 +33,16 @@ export class TaskParameters {
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._cpu = parseFloat(core.getInput('cpu'));
         this._dnsNameLabel = core.getInput('dns-name-label', { required: true });
+        let environmentVariables = core.getInput('environment-variables');
+        this._environmentVariables = []
+        if(environmentVariables) {
+            let keyValuePairs = environmentVariables.split(' ');
+            keyValuePairs.forEach((pair) => {
+                pair.split('=');
+                let obj: ContainerInstanceManagementModels.EnvironmentVariable = { "name": pair[0], "value": pair[1] }
+                this._environmentVariables.push(obj);
+            })
+        }
         let gpuCount = core.getInput('gpu-count');
         let gpuSku = core.getInput('gpu-sku');
         if(gpuSku && !gpuCount) {
@@ -104,6 +115,10 @@ export class TaskParameters {
 
     public get dnsNameLabel() {
         return this._dnsNameLabel;
+    }
+
+    public get environmentVariables() {
+        return this._environmentVariables;
     }
 
     public get gpuCount() {
