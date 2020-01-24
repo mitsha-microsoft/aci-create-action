@@ -37,9 +37,18 @@ export class TaskParameters {
         this._environmentVariables = []
         if(environmentVariables) {
             let keyValuePairs = environmentVariables.split(' ');
-            keyValuePairs.forEach((pair) => {
-                pair.split('=');
-                let obj: ContainerInstanceManagementModels.EnvironmentVariable = { "name": pair[0], "value": pair[1] }
+            keyValuePairs.forEach((pair: string) => {
+                let pairList = pair.split('=');
+                let obj: ContainerInstanceManagementModels.EnvironmentVariable = { "name": pairList[0], "value": pairList[1] };
+                this._environmentVariables.push(obj);
+            })
+        }
+        let secureEnvironmentVariables = core.getInput('secure-environment-variables');
+        if(secureEnvironmentVariables) {
+            let keyValuePairs = secureEnvironmentVariables.split(' ');
+            keyValuePairs.forEach((pair: string) => {
+                let pairList = pair.split('=');
+                let obj: ContainerInstanceManagementModels.EnvironmentVariable = { "name": pairList[0], "secureValue": pairList[1] };
                 this._environmentVariables.push(obj);
             })
         }
@@ -73,7 +82,7 @@ export class TaskParameters {
         }
         let ports = core.getInput('ports');
         let portObjArr: Array<ContainerInstanceManagementModels.Port> = [];
-        ports.split(' ').forEach((portStr) => {
+        ports.split(' ').forEach((portStr: string) => {
             let portInt = parseInt(portStr);
             portObjArr.push({ "port": portInt });
         });
