@@ -10,6 +10,7 @@ export class TaskParameters {
     private _endpoint: IAuthorizer;
     private _resourceGroup: string;
     private _cpu: number;
+    private _diagnostics: ContainerInstanceManagementModels.ContainerGroupDiagnostics;
     private _dnsNameLabel: string;
     private _environmentVariables: Array<ContainerInstanceManagementModels.EnvironmentVariable>;
     private _gpuCount: number;
@@ -29,10 +30,33 @@ export class TaskParameters {
     private _subscriptionId: string;
 
     private constructor(endpoint: IAuthorizer) {
+        // TODO: Huge Constructor for Task Params
         this._endpoint = endpoint;
         this._resourceGroup = core.getInput('resource-group', { required: true });
         this._cpu = parseFloat(core.getInput('cpu'));
         this._dnsNameLabel = core.getInput('dns-name-label', { required: true });
+        this._diagnostics = {}
+        let logType = core.getInput('log-type');
+        let logAnalyticsWorkspace = core.getInput('log-analytics-workspace');
+        let logAnalyticsWorkspaceKey = core.getInput('log-analytics-workspace-key');
+        // TODO: Find out how metadata is taken from the user
+        let logMetadata = core.getInput('log-metadata');
+        if(logAnalyticsWorkspace || logAnalyticsWorkspaceKey) {
+            if(!logAnalyticsWorkspaceKey || !logAnalyticsWorkspace) {
+                throw Error("The Log Analytics Workspace Id or Workspace Key are not provided. Please fill in the appropriate parameters.");
+            }
+            if(logType && (logType != 'ContainerInsights' && 'ContainerInstanceLogs')) {
+                throw Error("Log Type Can be Only of Type `ContainerInsights` or `ContainerInstanceLogs`");
+            }
+            let logAnalytics: ContainerInstanceManagementModels.LogAnalytics = { "workspaceId": logAnalyticsWorkspace, 
+                                                                                 "workspaceKey": logAnalyticsWorkspaceKey };
+            if(logType) {
+                let logT: ContainerInstanceManagementModels.LogAnalyticsLogType;
+                logT = (logType == 'ContainerInsights') ? 'ContainerInsights' : 'ContainerInstanceLogs';
+                logAnalytics.logType = logT;
+            }
+            this._diagnostics = { "logAnalytics": logAnalytics };
+        }
         let environmentVariables = core.getInput('environment-variables');
         this._environmentVariables = []
         if(environmentVariables) {
@@ -58,8 +82,7 @@ export class TaskParameters {
             throw Error("You need to specify the count of GPU Resources with the SKU!"); 
         } else {
             if(gpuCount && !gpuSku) {
-                core.warning('Since GPU SKU is not mentioned, creating GPU Resources with the SKU K80.');
-                gpuSku = 'K80';
+                throw Error("GPU SKU is not specified for the count. Please provide the `gpu-sku` parameter");
             }
             this._gpuCount = parseInt(gpuCount);
             this._gpuSKU = (gpuSku == 'K80') ? 'K80' : ( gpuSku == 'P100' ? 'P100' : 'V100');
@@ -120,6 +143,10 @@ export class TaskParameters {
 
     public get cpu() {
         return this._cpu;
+    }
+
+    public get diagnostics() {
+        return this._diagnostics;
     }
 
     public get dnsNameLabel() {

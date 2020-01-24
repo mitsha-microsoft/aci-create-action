@@ -35,6 +35,18 @@ inputs:
     location:
         description: 'Location where the Container will be deployed'
         required: true
+    log-analytics-workspace:
+        description: 'The Log Analytics Workspace Name or Id'
+        required: false
+    log-analytics-workspace-key:
+        description: 'The Log Analytics Workspace Key'
+        required: false
+    log-type:
+        description: 'The Log type to be used. Accepted Values are { ContainerInsights, ContainerInstanceLogs }'
+        required: false
+    log-metadata:
+        description: 'The Metadata for the log analytics' #TODO: How does the user give input here
+        required: false
     memory:
         description: 'Required Memory of the Containers in GB, accurate to one decimal place'
         required: false

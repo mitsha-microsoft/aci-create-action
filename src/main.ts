@@ -50,6 +50,7 @@ async function main() {
                 "type": taskParams.ipAddress,
                 "dnsNameLabel": taskParams.dnsNameLabel
             },
+            "diagnostics": taskParams.diagnostics,
             "osType": taskParams.osType,
             "restartPolicy": taskParams.restartPolicy,
             "type": "Microsoft.ContainerInstance/containerGroups",
