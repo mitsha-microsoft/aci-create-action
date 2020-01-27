@@ -42,6 +42,7 @@ async function main() {
                     "image": taskParams.image,
                     "ports": taskParams.ports,
                     "resources": getResources(taskParams),
+                    "volumeMounts": taskParams.volumeMounts
                 }
             ],
             "imageRegistryCredentials": taskParams.registryUsername ? [ { "server": taskParams.registryLoginServer, "username": taskParams.registryUsername, "password": taskParams.registryPassword } ] : [],
@@ -51,6 +52,7 @@ async function main() {
                 "dnsNameLabel": taskParams.dnsNameLabel
             },
             "diagnostics": taskParams.diagnostics,
+            "volumes": taskParams.volumes,
             "osType": taskParams.osType,
             "restartPolicy": taskParams.restartPolicy,
             "type": "Microsoft.ContainerInstance/containerGroups",

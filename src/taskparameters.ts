@@ -27,6 +27,8 @@ export class TaskParameters {
     private _registryUsername: string;
     private _registryPassword: string;
     private _restartPolicy: ContainerInstanceManagementModels.ContainerGroupRestartPolicy;
+    private _volumes: Array<ContainerInstanceManagementModels.Volume>;
+    private _volumeMounts: Array<ContainerInstanceManagementModels.VolumeMount>;
     
     private _subscriptionId: string;
 
@@ -134,6 +136,29 @@ export class TaskParameters {
             this._restartPolicy = ( restartPolicy == 'Always' ) ? 'Always' : ( restartPolicy == 'Never' ? 'Never' : 'OnFailure');
         }
 
+        this._volumes = [];
+        this._volumeMounts = [];
+        // Checking git repo volumes
+        let gitRepoVolumeUrl = core.getInput('gitrepo-url');
+        if(gitRepoVolumeUrl) {
+            let gitRepoDir = core.getInput('gitrepo-dir');
+            let gitRepoMountPath = core.getInput('gitrepo-mount-path');
+            let gitRepoRevision = core.getInput('gitrepo-revision');
+            let vol: ContainerInstanceManagementModels.GitRepoVolume = { "repository": gitRepoVolumeUrl };
+            if(gitRepoDir) {
+                vol.directory = gitRepoDir;
+            }
+            if(gitRepoRevision) {
+                vol.revision = gitRepoRevision;
+            }
+            if(!gitRepoMountPath) {
+                throw Error("The Mount Path for GitHub Volume is not specified.");
+            }
+            let volMount: ContainerInstanceManagementModels.VolumeMount = { "name":"git-repo-vol", "mountPath":gitRepoMountPath };
+            this._volumes.push({ "name": "git-repo-vol", gitRepo: vol });
+            this._volumeMounts.push(volMount);
+        }
+
         this._subscriptionId = endpoint.subscriptionID;
     }
 
@@ -218,6 +243,14 @@ export class TaskParameters {
 
     public get restartPolicy() {
         return this._restartPolicy;
+    }
+
+    public get volumes() {
+        return this._volumes;
+    }
+
+    public get volumeMounts() {
+        return this._volumeMounts;
     }
 
     public get subscriptionId() {
