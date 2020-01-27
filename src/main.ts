@@ -46,7 +46,7 @@ async function main() {
             ],
             "imageRegistryCredentials": taskParams.registryUsername ? [ { "server": taskParams.registryLoginServer, "username": taskParams.registryUsername, "password": taskParams.registryPassword } ] : [],
             "ipAddress": {
-                "ports": taskParams.ports,
+                "ports": getPorts(taskParams),
                 "type": taskParams.ipAddress,
                 "dnsNameLabel": taskParams.dnsNameLabel
             },
@@ -101,6 +101,14 @@ function getResources(taskParams: TaskParameters): ContainerInstanceManagementMo
         }
         return resRequirements;
     }
+}
+
+function getPorts(taskParams: TaskParameters): Array<ContainerInstanceManagementModels.Port> {
+    let ports = taskParams.ports;
+    ports.forEach((port) => {
+        port.protocol = taskParams.protocol;
+    });
+    return ports;
 }
 
 main();

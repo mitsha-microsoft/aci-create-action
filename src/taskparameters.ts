@@ -22,6 +22,7 @@ export class TaskParameters {
     private _containerName: string;
     private _osType: ContainerInstanceManagementModels.OperatingSystemTypes;
     private _ports: Array<ContainerInstanceManagementModels.Port>;
+    private _protocol: ContainerInstanceManagementModels.ContainerGroupNetworkProtocol;
     private _registryLoginServer: string;
     private _registryUsername: string;
     private _registryPassword: string;
@@ -110,6 +111,12 @@ export class TaskParameters {
             portObjArr.push({ "port": portInt });
         });
         this._ports = portObjArr;
+        let protocol = core.getInput('protocol');
+        if(protocol != "TCP" && "UDP") {
+            throw Error("The Network Protocol can only be TCP or UDP");
+        } else {
+            this._protocol = protocol == "TCP" ? 'TCP' : 'UDP';
+        }
         this._registryLoginServer = core.getInput('registry-login-server');
         if(!this._registryLoginServer) {
             // If the user doesn't give registry login server and the registry is ACR
@@ -191,6 +198,10 @@ export class TaskParameters {
 
     public get ports() {
         return this._ports;
+    }
+
+    public get protocol() {
+        return this._protocol;
     }
 
     public get registryLoginServer() {

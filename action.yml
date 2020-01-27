@@ -62,6 +62,10 @@ inputs:
         description: 'The Ports to Open on the Container. Space seperate the ports for multiple values'
         required: false
         default: '80'
+    protocol:
+        description: 'The Network protocol to use. Accepted Values are { TCP, UDP }'
+        required: false
+        default: 'TCP'
     registry-login-server:
         description: 'The container image registry login server'
         required: false
