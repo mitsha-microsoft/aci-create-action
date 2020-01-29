@@ -9,6 +9,7 @@ export class TaskParameters {
     private static taskparams: TaskParameters;
     private _endpoint: IAuthorizer;
     private _resourceGroup: string;
+    private _commandLine: Array<string>;
     private _cpu: number;
     private _diagnostics: ContainerInstanceManagementModels.ContainerGroupDiagnostics;
     private _dnsNameLabel: string;
@@ -36,14 +37,19 @@ export class TaskParameters {
         // TODO: Huge Constructor for Task Params
         this._endpoint = endpoint;
         this._resourceGroup = core.getInput('resource-group', { required: true });
+        this._commandLine = [];
+        let commandLine = core.getInput("command-line");
+        if(commandLine) {
+            commandLine.split(' ').forEach((command: string) => {
+                this._commandLine.push(command);
+            });
+        }
         this._cpu = parseFloat(core.getInput('cpu'));
         this._dnsNameLabel = core.getInput('dns-name-label', { required: true });
         this._diagnostics = {}
         let logType = core.getInput('log-type');
         let logAnalyticsWorkspace = core.getInput('log-analytics-workspace');
         let logAnalyticsWorkspaceKey = core.getInput('log-analytics-workspace-key');
-        // TODO: Find out how metadata is taken from the user
-        let logMetadata = core.getInput('log-metadata');
         if(logAnalyticsWorkspace || logAnalyticsWorkspaceKey) {
             if(!logAnalyticsWorkspaceKey || !logAnalyticsWorkspace) {
                 throw Error("The Log Analytics Workspace Id or Workspace Key are not provided. Please fill in the appropriate parameters.");
@@ -200,6 +206,10 @@ export class TaskParameters {
 
     public get resourceGroup() {
         return this._resourceGroup;
+    }
+
+    public get commandLine() {
+        return this._commandLine;
     }
 
     public get cpu() {

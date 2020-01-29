@@ -37,7 +37,7 @@ async function main() {
             "containers": [
                 {
                     "name": taskParams.containerName,
-                    "command": [],
+                    "command": taskParams.commandLine,
                     "environmentVariables": taskParams.environmentVariables,
                     "image": taskParams.image,
                     "ports": taskParams.ports,
