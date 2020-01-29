@@ -1,6 +1,4 @@
 #TODO: Change the Branding Accordingly
-#TODO: Identity Parameter in 'az container create' and the Template not supported yet
-#TODO: Support for more/all parameters to be added
 name: 'Deploy to Azure Container Instances'
 description: 'Deploy to Containers to Azure Container Instances. github.com/Azure/Actions'
 inputs:

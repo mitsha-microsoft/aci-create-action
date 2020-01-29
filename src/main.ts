@@ -31,7 +31,6 @@ async function main() {
         const client = new ContainerInstanceManagementClient(creds, taskParams.subscriptionId);
 
         core.debug("Deployment Step Started");
-        // TODO: Include all parameters in the ARM Template
         let containerGroupInstance: ContainerInstanceManagementModels.ContainerGroup = {
             "location": taskParams.location,
             "containers": [
